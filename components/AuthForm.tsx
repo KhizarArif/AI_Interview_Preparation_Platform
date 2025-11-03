@@ -11,7 +11,7 @@ import { Button } from './ui/button';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase/client';
 import { signUp } from '@/lib/actions/auth.actions';
 
@@ -48,6 +48,21 @@ const AuthForm = ({ type }: { type: FormType }) => {
     console.log("onSubmit Data", data)
 
     if (type === "sign-in") {
+
+      const { email, password } = data
+
+      const userCrediential = await signInWithEmailAndPassword(auth, email, password);
+
+      const idToken = await userCrediential.user.getIdToken();
+
+      if (!idToken) {
+        toast.error("Sign In Failed")
+        return {
+          success: false,
+          message: "Sign In Failed"
+        }
+      }
+
       toast.success("Sign In Success")
       console.log("Sign In")
       router.push("/")
