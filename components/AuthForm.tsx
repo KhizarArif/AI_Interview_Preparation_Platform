@@ -10,10 +10,10 @@ import { Form } from './ui/form';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase/client';
-import { signUp } from '@/lib/actions/auth.actions';
+import { signIn, signUp } from '@/lib/actions/auth.actions';
 
 
 const authFormSchema = (type: FormType) => {
@@ -63,9 +63,14 @@ const AuthForm = ({ type }: { type: FormType }) => {
         }
       }
 
+      await signIn({
+        email,
+        idToken
+      });
+
       toast.success("Sign In Success")
       console.log("Sign In")
-      router.push("/")
+      redirect("/");
     } else {
 
       const { name, email, password } = data
